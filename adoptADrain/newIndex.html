@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Adopt a Drain — Find It, Log It, Keep It Clean</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚓</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Boldonse&family=Space+Mono:wght@400;700&family=Work+Sans:wght@400;500;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --harbor:#5a9f7f;
+    --harbor-deep:#3d6b5a;
+    --parchment:#f7f1de;
+    --parchment-edge:#e3d6ac;
+    --ink:#13202f;
+    --gold:#f5c860;
+    --blue:#184d8f;
+    --white:#ffffff;
+    --max:1100px;
+    --radius:10px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--parchment);
+    color:var(--ink);
+    font-family:'Work Sans',sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  img{max-width:100%;display:block;}
+  a{color:inherit;text-decoration:none;}
+  .skip-link{
+    position:absolute;left:-999px;top:0;background:var(--gold);color:var(--ink);
+    padding:8px 16px;z-index:200;
+  }
+  .skip-link:focus{left:8px;top:8px;}
+  :focus-visible{outline:3px solid var(--gold);outline-offset:3px;}
+
+  /* ---------- NAV ---------- */
+  .topnav{
+    background:var(--harbor);
+    position:sticky;top:0;z-index:100;
+    border-bottom:3px solid var(--harbor-deep);
+  }
+  .nav-inner{
+    max-width:var(--max);margin:0 auto;padding:14px 24px;
+    display:flex;align-items:center;justify-content:space-between;
+  }
+  .nav-logo{
+    font-family:'Space Mono',monospace;
+    color:var(--white);font-weight:700;letter-spacing:.02em;font-size:1rem;
+  }
+  .nav-links{
+    list-style:none;display:flex;align-items:center;gap:14px;margin:0;padding:0;
+    font-family:'Space Mono',monospace;color:var(--white);font-size:.95rem;
+  }
+  .nav-links a{color:var(--white);}
+  .nav-links a:hover{color:var(--gold);}
+  .nav-links .divider{color:rgba(255,255,255,.55);}
+  .nav-toggle{display:none;flex-direction:column;gap:5px;background:none;border:0;cursor:pointer;padding:6px;}
+  .nav-toggle span{width:24px;height:2px;background:var(--white);display:block;}
+
+  @media (max-width:720px){
+    .nav-toggle{display:flex;}
+    .nav-links{
+      position:absolute;top:100%;left:0;right:0;background:var(--harbor);
+      flex-direction:column;align-items:flex-start;gap:0;
+      max-height:0;overflow:hidden;transition:max-height .25s ease;
+      border-top:1px solid rgba(255,255,255,.2);
+    }
+    .nav-links.open{max-height:260px;}
+    .nav-links li{width:100%;padding:14px 24px;border-bottom:1px solid rgba(255,255,255,.12);}
+    .nav-links .divider{display:none;}
+  }
+
+  /* ---------- HERO ---------- */
+  .hero{position:relative;overflow:hidden;min-height:88vh;display:flex;align-items:center;}
+  .hero-bg{
+    position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 30%;
+  }
+  .hero-scrim{
+    position:absolute;inset:0;
+    background:linear-gradient(180deg, rgba(24,77,143,.55) 0%, rgba(24,77,143,.55) 35%, rgba(20,50,90,.85) 100%);
+  }
+  .hero-content{
+    position:relative;z-index:2;max-width:780px;margin:0 auto;padding:90px 24px 70px;text-align:center;
+  }
+  .hero-clue{
+    font-family:'Space Mono',monospace;color:var(--white);
+    font-size:clamp(.95rem,2vw,1.15rem);line-height:1.6;
+    max-width:560px;margin:0 auto 28px;
+  }
+  .hero-clue::before,.hero-clue::after{content:"✦";color:var(--gold);display:block;margin:0 auto 10px;font-size:1rem;}
+  .wordmark{
+    font-family:'Boldonse',sans-serif;color:var(--white);
+    font-size:clamp(2.4rem,8vw,5.2rem);line-height:1;margin:0 0 14px;
+    text-shadow:0 4px 0 var(--harbor-deep);
+  }
+  .hero-sub{
+    font-family:'Space Mono',monospace;color:var(--gold);
+    font-size:clamp(1rem,2.4vw,1.3rem);letter-spacing:.03em;margin:0 0 36px;
+  }
+  .hero-ctas{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;}
+  .btn{
+    font-family:'Space Mono',monospace;font-size:.95rem;
+    padding:14px 26px;border-radius:999px;display:inline-flex;align-items:center;gap:6px;
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .btn-primary{background:var(--gold);color:var(--blue);font-weight:700;box-shadow:0 4px 0 rgba(24,77,143,.3);}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 0 rgba(24,77,143,.3);}
+  .btn-ghost{border:2px solid rgba(255,255,255,.7);color:var(--white);}
+  .btn-ghost:hover{background:rgba(255,255,255,.12);}
+
+  /* ---------- BLUE BANDS ---------- */
+  .band{background:var(--harbor);padding:34px 24px;text-align:center;}
+  .band-text{
+    font-family:'Work Sans',sans-serif;font-weight:600;color:var(--white);
+    font-size:clamp(1.3rem,3.6vw,2.2rem);margin:0;max-width:var(--max);margin:0 auto;
+  }
+  .band-text.mono{font-family:'Space Mono',monospace;font-weight:400;font-size:clamp(1.05rem,2.6vw,1.4rem);}
+
+  /* ---------- SECTIONS ---------- */
+  .section{padding:70px 24px;position:relative;}
+  .section::before{
+    content:"";position:absolute;inset:0;
+    background-image:
+      radial-gradient(circle at 12% 18%, rgba(194,135,47,.05), transparent 40%),
+      radial-gradient(circle at 85% 75%, rgba(6,58,99,.05), transparent 45%);
+    pointer-events:none;
+  }
+  .wrap{max-width:var(--max);margin:0 auto;position:relative;z-index:1;}
+  .stop-chip{
+    display:inline-block;font-family:'Space Mono',monospace;font-size:.8rem;font-weight:700;
+    color:var(--harbor-deep);background:var(--white);border:2px dashed var(--gold);
+    padding:6px 14px;border-radius:999px;transform:rotate(-2deg);margin-bottom:18px;
+    letter-spacing:.04em;
+  }
+  .big-black{
+    font-family:'Inter',sans-serif;font-weight:700;color:var(--ink);
+    font-size:clamp(2.4rem,7vw,5rem);margin:0 0 18px;line-height:1;
+  }
+  .label-blue{
+    font-family:'Space Mono',monospace;color:var(--harbor);font-size:clamp(1.1rem,2.6vw,1.5rem);
+    margin:0 0 14px;font-weight:700;
+  }
+  .section-copy{font-size:1.08rem;line-height:1.7;color:var(--ink);max-width:640px;margin:0 0 28px;}
+
+  .map-card{
+    margin:0 auto;max-width:760px;position:relative;
+    background:var(--white);padding:14px;border:3px dashed var(--gold);
+    border-radius:var(--radius);transform:rotate(-1deg);
+    box-shadow:0 12px 28px rgba(6,30,50,.18);
+  }
+  .map-card::before{
+    content:"";position:absolute;top:-12px;left:50%;transform:translateX(-50%);
+    width:22px;height:22px;border-radius:50%;background:var(--gold);
+    box-shadow:0 2px 4px rgba(0,0,0,.3);
+  }
+  .map-card img{border-radius:6px;}
+
+  .wrap-split{display:flex;align-items:center;gap:56px;}
+  .wrap-split.reverse{flex-direction:row-reverse;}
+  .wrap-text{flex:1 1 340px;min-width:280px;}
+  .icon-img{
+    flex:0 1 320px;max-width:320px;transform:rotate(2deg);
+    filter:drop-shadow(0 14px 18px rgba(6,30,50,.18));
+  }
+  @media (max-width:780px){
+    .wrap-split, .wrap-split.reverse{flex-direction:column;}
+    .icon-img{max-width:220px;order:-1;}
+  }
+
+  .wordmark-sm{
+    font-family:'Boldonse',sans-serif;color:var(--harbor);
+    font-size:clamp(1.8rem,4.5vw,2.8rem);margin:0 0 10px;
+  }
+
+  /* ---------- FOOTER ---------- */
+  .footer{
+    background:var(--harbor-deep);color:var(--white);text-align:center;
+    padding:54px 24px 38px;
+  }
+  .footer-word{font-family:'Boldonse',sans-serif;font-size:1.6rem;margin:0 0 6px;}
+  .footer-tag{font-family:'Space Mono',monospace;color:var(--gold);margin:0 0 26px;font-size:.95rem;}
+  .footer-links{
+    list-style:none;display:flex;justify-content:center;gap:14px;margin:0 0 22px;padding:0;
+    font-family:'Space Mono',monospace;font-size:.9rem;
+  }
+  .footer-links a:hover{color:var(--gold);}
+  .footer-links .divider{color:rgba(255,255,255,.4);}
+  .footer-fine{font-size:.8rem;color:rgba(255,255,255,.55);margin:0;}
+
+  /* ---------- SCROLL REVEAL ---------- */
+  .reveal{opacity:0;transform:translateY(16px);transition:opacity .5s ease, transform .5s ease;}
+  .reveal.in{opacity:1;transform:none;}
+  @media (prefers-reduced-motion:reduce){
+    .reveal{opacity:1;transform:none;transition:none;}
+    .btn{transition:none;}
+  }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<nav class="topnav">
+  <div class="nav-inner">
+    <a class="nav-logo" href="#top">Adopt a Drain</a>
+    <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#top">home</a></li>
+      <li class="divider" aria-hidden="true">|</li>
+      <li><a href="#hunt">scavenger hunt</a></li>
+      <li class="divider" aria-hidden="true">|</li>
+      <li><a href="#adopt">adopt-a-drain</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <img class="hero-bg" src="https://storage.googleapis.com/figwp-figma-to-wordpress/figma-48:126.png" alt="Illustrated pirate-style map of the neighborhood with a trail marked across it">
+  <div class="hero-scrim"></div>
+  <div class="hero-content">
+    <p class="hero-clue">Set sail on an adventure! Follow pirate clues to discover painted storm drains around the community</p>
+    <h1 class="wordmark">Adopt a Drain</h1>
+    <p class="hero-sub">keep our waterways clean</p>
+    <div class="hero-ctas">
+      <a class="btn btn-primary" href="#hunt">go to scav hunt →</a>
+      <a class="btn btn-ghost" href="#adopt">adopt-a-drain →</a>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+
+  <section class="section blue-section" style="background:var(--blue);padding:54px 24px;">
+    <div class="wrap" style="display:flex;align-items:center;justify-content:center;flex-direction:column;">
+      <span class="stop-chip" style="background:var(--gold);color:var(--ink);border-color:var(--gold);margin-bottom:28px;">help collect data</span>
+      <figure class="map-card" style="max-width:500px;">
+        <img src="https://storage.googleapis.com/figwp-figma-to-wordpress/figma-48:126.png" alt="Painted storm drain with pirate-themed artwork">
+      </figure>
+    </div>
+  </section>
+
+  <section class="section blue-section" style="background:var(--blue);padding:70px 24px;color:var(--white);text-align:center;">
+    <div class="wrap reveal">
+      <h2 style="font-family:'Work Sans',sans-serif;font-size:clamp(2rem,5vw,3.2rem);margin:0 0 24px;color:var(--white);">Find all the drains</h2>
+      <p class="section-copy" style="color:var(--white);max-width:600px;margin:0 auto 28px;">Set sail on an adventure! Follow pirate clues to discover painted storm drains around the community</p>
+      <a class="btn btn-primary" href="#hunt">go to scav hunt →</a>
+    </div>
+  </section>
+
+  <div class="band" style="background:var(--harbor);"><p class="band-text">Take a look at the drains available</p></div>
+
+  <div class="band" style="background:var(--harbor);"><p class="band-text mono">adopt a drain and keep it clean</p></div>
+
+  <section class="section" id="map-section">
+    <div class="wrap reveal">
+      <h2 class="big-black" style="text-align:center;">map of drains</h2>
+      <figure class="map-card" style="margin-top:32px;">
+        <img src="https://storage.googleapis.com/figwp-figma-to-wordpress/figma-31:2.png" alt="Map marking storm drain locations across the community">
+      </figure>
+    </div>
+  </section>
+
+  <section class="section blue-section" style="background:var(--blue);padding:70px 24px;" id="hunt">
+    <div class="wrap wrap-split reveal">
+      <div class="wrap-text" style="color:var(--white);">
+        <h3 style="font-family:'Boldonse',sans-serif;color:var(--white);font-size:2rem;margin:0 0 16px;">Scavenger Hunt</h3>
+        <p class="section-copy" style="color:var(--white);margin:0 0 28px;">Every drain on the map was found, photographed, and logged by someone in the neighborhood. Spot a painted drain, snap a photo, and add it to the map. Every clue you log helps the stormwater team see the bigger picture.</p>
+        <a class="btn btn-primary" href="#top">go to scav hunt →</a>
+      </div>
+      <img class="icon-img" src="https://storage.googleapis.com/figwp-figma-to-wordpress/figma-52:4.png" alt="Illustration representing the storm drain scavenger hunt">
+    </div>
+  </section>
+
+  <section class="section blue-section" style="background:var(--blue);padding:70px 24px;" id="adopt">
+    <div class="wrap wrap-split reverse reveal">
+      <img class="icon-img" src="https://storage.googleapis.com/figwp-figma-to-wordpress/figma-52:7.png" alt="Illustration representing adopting a storm drain">
+      <div class="wrap-text" style="color:var(--white);">
+        <h3 style="font-family:'Boldonse',sans-serif;color:var(--white);font-size:2rem;margin:0 0 16px;">Adopt a Drain</h3>
+        <p class="section-copy" style="color:var(--white);margin:0 0 28px;">Pick the drain you found and put your name on it. Adopting means checking in every few months, clearing leaves and trash, and reporting what you find. No mop required — just a trash bag and fifteen minutes.</p>
+        <a class="btn btn-primary" href="#">adopt-a-drain →</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <p class="footer-word">Adopt a Drain</p>
+  <p class="footer-tag">keep our waterways clean</p>
+  <ul class="footer-links">
+    <li><a href="#top">home</a></li>
+    <li class="divider" aria-hidden="true">|</li>
+    <li><a href="#hunt">scavenger hunt</a></li>
+    <li class="divider" aria-hidden="true">|</li>
+    <li><a href="#adopt">adopt-a-drain</a></li>
+  </ul>
+  <p class="footer-fine">A neighborhood stormwater project · est. 2026</p>
+</footer>
+
+<script>
+  // mobile nav toggle
+  var toggle = document.getElementById('navToggle');
+  var links = document.getElementById('navLinks');
+  toggle.addEventListener('click', function(){
+    var open = links.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+  links.addEventListener('click', function(e){
+    if(e.target.tagName === 'A'){ links.classList.remove('open'); toggle.setAttribute('aria-expanded','false'); }
+  });
+
+  // scroll reveal
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(!reduced && 'IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if(entry.isIntersecting){ entry.target.classList.add('in'); io.unobserve(entry.target); }
+      });
+    }, {threshold:.15});
+    document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
+  } else {
+    document.querySelectorAll('.reveal').forEach(function(el){ el.classList.add('in'); });
+  }
+</script>
+</body>
+</html>
